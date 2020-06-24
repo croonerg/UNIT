@@ -1,0 +1,53 @@
+{
+  "users": [
+    {
+      "name":  "Smith, Kames",
+      "sequence": "3",
+      "role": "Executive officer",
+      "began": "1/30/2020"
+    },
+    {
+      "name":  "Verity, True",
+      "sequence": "33",
+      "role": "Director",
+      "began": "12/12/2019"
+    },
+    {
+      "name":  "Elias, Max",
+      "sequence": "1",
+      "role": "Director",
+      "began": "3/13/2020"
+
+    },
+    {
+      "name":  "Samson, Sandy",
+      "sequence": "2",
+      "role": "Employee",
+      "began": "4/1/1989"
+    },
+    {
+      "name":  "Mature, Con",
+      "sequence": "7",
+      "role": null,
+      "began": "12/1/1987"
+    },
+    {
+      "name":  "Nerder, Lou",
+      "sequence": "4",
+      "role": "Employee",
+      "began": "10/3/1985"
+    },
+    {
+      "name":  "Schønningberg-Müller, Kim",
+      "sequence": "6",
+      "role": "Director",
+      "began": "5/1/2019"
+    },
+    {
+      "name":  "Berg-Müller, Alex",
+      "sequence": "5",
+      "role": "Director",
+      "began": "23/9/2018"
+    }
+  ]
+}
