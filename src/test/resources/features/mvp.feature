@@ -35,5 +35,5 @@ Feature:
 
   Scenario: User attempts to transform badly formatted file
     Given the user has a file "badly_formatted.json"
-    When the user transforms the data
+    When the user transforms the file to ""
     Then the user sees an error message telling that the input file is badly formatted

@@ -10,11 +10,12 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import no.unit.transformer.Transformer;
 
-import org.apache.commons.io.FilenameUtils;
+import no.unit.transformer.utils.FileUtils.FILE_FORMAT;
 import org.junit.jupiter.api.BeforeEach;
 import picocli.CommandLine;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -26,8 +27,8 @@ public class StepDefinitions extends TestWiring {
   private CommandLine cmd;
   private StringBuilder command;
   private String inputFile;
-  private String outputFile;
-  private Transformer.SUPPORTED_FILE_FORMAT outputFormat;
+  private File outputFile;
+  private FILE_FORMAT outputFormat;
 
   @Before
   public void setUp(Scenario scenario) {
@@ -79,28 +80,17 @@ public class StepDefinitions extends TestWiring {
   }
 
   @When("the user transforms the file to {string}")
-  public void the_user_transforms_the_file_to(String format) {
-    if (format == null || format.isEmpty()) {
-      outputFormat =
-          Transformer.SUPPORTED_FILE_FORMAT.valueOf(
-              FilenameUtils.getExtension(inputFile).toUpperCase());
-    } else {
-      outputFormat = Transformer.SUPPORTED_FILE_FORMAT.valueOf(format.toUpperCase());
-    }
+  public void the_user_transforms_the_file_to(String outputFormat) {
+    cmd.execute(String.format(command.toString(), inputFile, outputFile, outputFormat).split(" "));
   }
 
   @Then("the user sees that the output file conforms to {string}")
   public void the_user_sees_that_the_output_file_conforms_to(String string) {
-      assertEquals("expected output", out.toString());
-  }
-
-  @When("the user transforms the data")
-  public void the_user_transforms_the_data() {
-    cmd.execute(String.format(command.toString(), inputFile, outputFile, outputFormat).split(" "));
+    assertEquals("expected output", out.toString());
   }
 
   @Then("the user sees an error message telling that the input file is badly formatted")
   public void the_user_sees_an_error_message_telling_that_the_input_file_is_badly_formatted() {
-      assertEquals("expected output", err.toString());
+    assertEquals("expected output", err.toString());
   }
 }

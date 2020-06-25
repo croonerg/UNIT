@@ -2,6 +2,10 @@ package no.unit.transformer;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
+
+import no.unit.transformer.utils.FileUtils;
+import no.unit.transformer.utils.FileUtils.FILE_FORMAT;
+import org.apache.commons.io.FilenameUtils;
 import picocli.CommandLine;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -9,6 +13,7 @@ import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Spec;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.concurrent.Callable;
 
@@ -30,32 +35,22 @@ public class Transformer implements Callable<Integer> {
   private static final int EXIT_CODE_SUCCESS = 0;
   private static final int EXIT_CODE_MISSING_INPUT_ERROR = 3;
 
-  public enum SUPPORTED_FILE_FORMAT {
-    XML,
-    JSON
-  }
-
   @Spec private CommandSpec spec;
 
   @Option(
       names = {"-i", "--input"},
       description = "The file to transform")
-  private File inputFile;
+  private File optionInputFile;
 
   @Option(
       names = {"-o", "--output"},
       description = "The final transformed file")
-  private File outputFile;
-
-  @Option(
-      names = {"-if", "--input-format"},
-      description = "XML, JSON")
-  private String inputFormat; // NOPMD
+  private File optionOutputFile;
 
   @Option(
       names = {"-of", "--output-format"},
       description = "XML, JSON")
-  private String outputFormat; // NOPMD
+  private FILE_FORMAT optionOutputFormat;
 
   public static void main(String... args) {
     int exitCode = new CommandLine(new Transformer()).execute(args);
@@ -64,19 +59,33 @@ public class Transformer implements Callable<Integer> {
 
   @Override
   public Integer call() throws Exception {
-    if (inputFile == null || outputFile == null) {
+    if (optionInputFile == null || optionOutputFile == null) {
       return EXIT_CODE_MISSING_INPUT_ERROR;
     }
 
-    byte[] fileContents = Files.readAllBytes(inputFile.toPath()); // NOPMD
+    FILE_FORMAT inputFormat =
+        FileUtils.getFileFormat(FilenameUtils.getExtension(optionInputFile.getName()));
 
-    // TODO: detect format on input file if output format is not given
-    SUPPORTED_FILE_FORMAT inputFileFormat = SUPPORTED_FILE_FORMAT.XML; // NOPMD
+    Parser parser;
+    if (inputFormat == FILE_FORMAT.XML) {
+      parser = new XMLParser();
+    } else if (inputFormat == FILE_FORMAT.JSON) {
+      parser = new JSONParser();
+    } else {
+      throw new IllegalArgumentException();
+    }
 
-    // TODO: parse output and save as inputFormat or inputFileFormat
-    String output = "this is the parsed output";
+    byte[] fileContents = Files.readAllBytes(optionInputFile.toPath());
+    String inputString = new String(fileContents, StandardCharsets.UTF_8);
+    FILE_FORMAT outputFormat = optionOutputFormat != null ? optionOutputFormat : inputFormat;
+    String output = "";
+    if (outputFormat == FILE_FORMAT.XML) {
+      output = parser.toXML(inputString);
+    } else if (outputFormat == FILE_FORMAT.JSON) {
+      output = parser.toJSON(inputString);
+    }
 
-    FileWriter fileWriter = new FileWriter(outputFile); // NOPMD
+    FileWriter fileWriter = new FileWriter(optionOutputFile); // NOPMD
     PrintWriter printWriter = new PrintWriter(fileWriter);
     try {
       printWriter.printf(output);
