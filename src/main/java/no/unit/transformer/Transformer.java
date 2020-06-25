@@ -49,6 +49,8 @@ public class Transformer implements Callable<Integer> {
 
   @Option(
       names = {"-of", "--output-format"},
+      defaultValue = "UNKNOWN",
+      fallbackValue = "UNKNOWN",
       description = "XML, JSON")
   private FILE_FORMAT optionOutputFormat;
 
@@ -77,7 +79,8 @@ public class Transformer implements Callable<Integer> {
 
     byte[] fileContents = Files.readAllBytes(optionInputFile.toPath());
     String inputString = new String(fileContents, StandardCharsets.UTF_8);
-    FILE_FORMAT outputFormat = optionOutputFormat != null ? optionOutputFormat : inputFormat;
+    FILE_FORMAT outputFormat =
+        optionOutputFormat != FILE_FORMAT.UNKNOWN ? optionOutputFormat : inputFormat;
     String output = "";
     if (outputFormat == FILE_FORMAT.XML) {
       output = parser.toXML(inputString);
