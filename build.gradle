@@ -20,14 +20,16 @@ def junit5Version = '5.6.2'
 def cucumberVersion = '6.0.0'
 def commonsIOVersion = '2.7'
 def picocliVersion = '4.3.2'
+def jsonJavaVersion = '20200518'
 
 dependencies {
+    compile group: 'commons-io', name: 'commons-io', version: commonsIOVersion
     compile group: 'info.picocli', name: 'picocli', version: picocliVersion
+    compile group: 'org.json', name: 'json', version: jsonJavaVersion
 
     testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit5Version
     testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: junit5Version
-
-    testImplementation group: 'commons-io', name: 'commons-io', version: commonsIOVersion
+    
     testImplementation group: 'io.cucumber', name: 'cucumber-java', version: cucumberVersion
 
 }
